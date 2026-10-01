@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Loans')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('loans', ${loggedInAdmin})}"></div>
+
+<main class="container narrow">
+    <a th:href="@{/admin/loans}" class="back-link">&larr; Back to loans</a>
+    <h1>Grant a new loan</h1>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <form th:action="@{/admin/loans}" th:object="${loanForm}" method="post" class="card form-card">
+        <div class="form-row">
+            <label for="customerId">Customer</label>
+            <select id="customerId" th:field="*{customerId}">
+                <option value="">-- select customer --</option>
+                <option th:each="customer : ${customers}" th:value="${customer.id}"
+                        th:text="${customer.fullName + ' (' + customer.email + ')'}"></option>
+            </select>
+            <p class="field-error" th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}"></p>
+        </div>
+        <div class="form-row">
+            <label for="loanType">Loan type</label>
+            <select id="loanType" th:field="*{loanType}">
+                <option value="">-- select type --</option>
+                <option value="PERSONAL">Personal</option>
+                <option value="HOME">Home</option>
+                <option value="AUTO">Auto</option>
+                <option value="EDUCATION">Education</option>
+                <option value="BUSINESS">Business</option>
+            </select>
+            <p class="field-error" th:if="${#fields.hasErrors('loanType')}" th:errors="*{loanType}"></p>
+        </div>
+        <div class="form-row">
+            <label for="principalAmount">Principal amount</label>
+            <input type="number" id="principalAmount" step="0.01" min="0.01" th:field="*{principalAmount}">
+            <p class="field-error" th:if="${#fields.hasErrors('principalAmount')}" th:errors="*{principalAmount}"></p>
+        </div>
+        <div class="form-row">
+            <label for="interestRate">Interest rate (%)</label>
+            <input type="number" id="interestRate" step="0.01" min="0.00" max="100.00" th:field="*{interestRate}">
+            <p class="field-error" th:if="${#fields.hasErrors('interestRate')}" th:errors="*{interestRate}"></p>
+        </div>
+        <div class="form-row">
+            <button type="submit" class="btn-primary">Grant loan</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

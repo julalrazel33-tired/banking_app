@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Transfers')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('transfers', ${loggedInAdmin})}"></div>
+
+<main class="container narrow">
+    <h1>Transfer money</h1>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <form th:action="@{/admin/transfers}" th:object="${transferForm}" method="post" class="card form-card">
+        <div class="form-row">
+            <label for="sourceAccountNumber">Source account number</label>
+            <input type="text" id="sourceAccountNumber" th:field="*{sourceAccountNumber}">
+            <p class="field-error" th:if="${#fields.hasErrors('sourceAccountNumber')}"
+               th:errors="*{sourceAccountNumber}"></p>
+        </div>
+        <div class="form-row">
+            <label for="destinationAccountNumber">Destination account number</label>
+            <input type="text" id="destinationAccountNumber" th:field="*{destinationAccountNumber}">
+            <p class="field-error" th:if="${#fields.hasErrors('destinationAccountNumber')}"
+               th:errors="*{destinationAccountNumber}"></p>
+        </div>
+        <div class="form-row">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" step="0.01" min="0.01" th:field="*{amount}">
+            <p class="field-error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></p>
+        </div>
+        <div class="form-row">
+            <button type="submit" class="btn-primary">Transfer</button>
+        </div>
+    </form>
+
+    <section class="card">
+        <h2>Available accounts</h2>
+        <table class="table">
+            <thead>
+            <tr><th>Account no.</th><th>Customer</th><th>Balance</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(accounts)}">
+                <td colspan="4" class="empty-cell">No accounts available.</td>
+            </tr>
+            <tr th:each="account : ${accounts}">
+                <td th:text="${account.accountNumber}">12345</td>
+                <td th:text="${account.customer.fullName}">Name</td>
+                <td th:text="${'$' + #numbers.formatDecimal(account.balance, 1, 2)}">$0.00</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="'badge-' + ${account.status.name().toLowerCase()}"
+                          th:text="${account.status.name()}">ACTIVE</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <section class="card">
+        <h1>Something went wrong</h1>
+        <p th:text="${message != null ? message : 'An unexpected error occurred.'}">Error</p>
+        <a th:href="@{/admin}" class="btn-primary">Back to dashboard</a>
+    </section>
+</main>
+</body>
+</html>

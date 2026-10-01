@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Loans')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('loans', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <div class="card-header page-heading">
+        <h1>Loans</h1>
+        <a th:href="@{/admin/loans/new}" class="btn-primary">Grant loan</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <section class="card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Loan</th>
+                <th>Customer</th>
+                <th>Type</th>
+                <th>Principal</th>
+                <th>Rate</th>
+                <th>Remaining</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(loans)}">
+                <td colspan="9" class="empty-cell">No loans granted yet.</td>
+            </tr>
+            <tr th:each="loan : ${loans}">
+                <td th:text="'#' + ${loan.id}">#1</td>
+                <td>
+                    <a th:href="@{/admin/customers/{id}(id=${loan.customer.id})}" th:text="${loan.customer.fullName}">Name</a>
+                </td>
+                <td th:text="${loan.loanType.name()}">PERSONAL</td>
+                <td th:text="${'$' + #numbers.formatDecimal(loan.principalAmount, 1, 2)}">$0.00</td>
+                <td th:text="${loan.interestRate} + '%'">0%</td>
+                <td th:text="${'$' + #numbers.formatDecimal(loan.remainingBalance, 1, 2)}">$0.00</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="'badge-' + ${loan.status.name().toLowerCase()}"
+                          th:text="${loan.status.name()}">ACTIVE</span>
+                </td>
+                <td th:text="${#temporals.format(loan.dateCreated, 'dd MMM yyyy')}">date</td>
+                <td class="actions">
+                    <a th:href="@{/admin/loans/{id}(id=${loan.id})}" class="btn-small">View</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

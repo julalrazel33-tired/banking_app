@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Not found')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <section class="card">
+        <h1>404 - Not found</h1>
+        <p th:text="${message != null ? message : 'The requested resource could not be found.'}">Not found</p>
+        <a th:href="@{/admin}" class="btn-primary">Back to dashboard</a>
+    </section>
+</main>
+</body>
+</html>

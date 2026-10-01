@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Transactions')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('transactions', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <div class="card-header page-heading">
+        <h1>Transactions</h1>
+        <a th:href="@{/admin/transfers}" class="btn-primary">New transfer</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <section class="card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(transactions)}">
+                <td colspan="7" class="empty-cell">No transactions recorded yet.</td>
+            </tr>
+            <tr th:each="t : ${transactions}">
+                <td>
+                    <span class="badge" th:classappend="'badge-' + ${t.transactionType.name().toLowerCase()}"
+                          th:text="${t.transactionType.name()}">TYPE</span>
+                </td>
+                <td th:text="${'$' + #numbers.formatDecimal(t.amount, 1, 2)}">$0.00</td>
+                <td th:text="${t.sourceAccount != null ? t.sourceAccount.accountNumber : '-'}">-</td>
+                <td th:text="${t.destinationAccount != null ? t.destinationAccount.accountNumber : '-'}">-</td>
+                <td th:text="${#temporals.format(t.transactionDate, 'dd MMM yyyy HH:mm')}">date</td>
+                <td th:text="${t.description}">desc</td>
+                <td>
+                    <span class="badge" th:classappend="'badge-' + ${t.status.name().toLowerCase()}"
+                          th:text="${t.status.name()}">SUCCESS</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

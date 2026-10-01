@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' | Banking System'">Banking System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<header th:fragment="navbar(active, user)" class="site-header">
+    <div class="brand">
+        <span class="brand-name">Banking System</span>
+        <span class="brand-sub">Administrator Portal</span>
+    </div>
+    <nav class="main-nav">
+        <ul>
+            <li>
+                <a th:href="@{/admin}" th:classappend="${active == 'dashboard'} ? 'active' : ''">Dashboard</a>
+            </li>
+            <li>
+                <a th:href="@{/admin/customers}" th:classappend="${active == 'customers'} ? 'active' : ''">Customers</a>
+            </li>
+            <li>
+                <a th:href="@{/admin/accounts}" th:classappend="${active == 'accounts'} ? 'active' : ''">Accounts</a>
+            </li>
+            <li>
+                <a th:href="@{/admin/transfers}" th:classappend="${active == 'transfers'} ? 'active' : ''">Transfers</a>
+            </li>
+            <li>
+                <a th:href="@{/admin/transactions}" th:classappend="${active == 'transactions'} ? 'active' : ''">Transactions</a>
+            </li>
+            <li>
+                <a th:href="@{/admin/loans}" th:classappend="${active == 'loans'} ? 'active' : ''">Loans</a>
+            </li>
+            <li>
+                <a th:href="@{/admin/admins}" th:classappend="${active == 'admins'} ? 'active' : ''">Admins</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="user-box">
+        <span class="user-name" th:if="${user != null}" th:text="'User: ' + ${user}">User</span>
+        <form th:action="@{/admin/logout}" method="post" class="inline">
+            <button type="submit" class="btn-link">Log out</button>
+        </form>
+    </div>
+</header>
+
+<div th:fragment="flash" class="flash-area">
+    <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+</div>
+
+</html>

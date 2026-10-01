@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Accounts')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('accounts', ${loggedInAdmin})}"></div>
+
+<main class="container narrow">
+    <a th:href="@{/admin/accounts}" class="back-link">&larr; Back to accounts</a>
+    <h1>Open a new account</h1>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <form th:action="@{/admin/accounts}" th:object="${accountForm}" method="post" class="card form-card">
+        <div class="form-row">
+            <label for="customerId">Customer</label>
+            <select id="customerId" th:field="*{customerId}">
+                <option th:each="customer : ${customers}" th:value="${customer.id}"
+                        th:text="${customer.fullName + ' (' + customer.email + ')'}"></option>
+            </select>
+            <p class="field-error" th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}"></p>
+        </div>
+        <div class="form-row">
+            <label for="accountType">Account type</label>
+            <select id="accountType" th:field="*{accountType}">
+                <option value="">-- select type --</option>
+                <option value="CHECKING">Checking</option>
+                <option value="SAVINGS">Savings</option>
+            </select>
+            <p class="field-error" th:if="${#fields.hasErrors('accountType')}" th:errors="*{accountType}"></p>
+        </div>
+        <div class="form-row">
+            <label for="openingBalance">Opening balance</label>
+            <input type="number" id="openingBalance" step="0.01" min="0.00" th:field="*{openingBalance}">
+            <p class="field-error" th:if="${#fields.hasErrors('openingBalance')}" th:errors="*{openingBalance}"></p>
+        </div>
+        <div class="form-row">
+            <button type="submit" class="btn-primary">Open account</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

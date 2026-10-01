@@ -1,0 +1,9 @@
+target/
+.env
+.git
+.gitattributes
+.gitignore
+HELP.md
+app.log
+app.err.log
+.mvn/

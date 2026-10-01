@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('dashboard', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <h1>Dashboard</h1>
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <div class="stats-grid">
+        <div class="card stat">
+            <div class="stat-label">Total customers</div>
+            <div class="stat-value" th:text="${stats.totalCustomers}">0</div>
+            <a th:href="@{/admin/customers}" class="stat-link">View customers</a>
+        </div>
+        <div class="card stat">
+            <div class="stat-label">Total accounts</div>
+            <div class="stat-value" th:text="${stats.totalAccounts}">0</div>
+            <a th:href="@{/admin/accounts}" class="stat-link">View accounts</a>
+        </div>
+        <div class="card stat">
+            <div class="stat-label">Total balance held</div>
+            <div class="stat-value" th:text="${'$' + #numbers.formatDecimal(stats.totalBalance, 1, 2)}">$0.00</div>
+            <a th:href="@{/admin/accounts}" class="stat-link">View accounts</a>
+        </div>
+        <div class="card stat">
+            <div class="stat-label">Active loans</div>
+            <div class="stat-value" th:text="${stats.activeLoans}">0</div>
+            <a th:href="@{/admin/loans}" class="stat-link">View loans</a>
+        </div>
+        <div class="card stat">
+            <div class="stat-label">Frozen accounts</div>
+            <div class="stat-value" th:text="${stats.frozenAccounts}">0</div>
+            <a th:href="@{/admin/accounts}" class="stat-link">View accounts</a>
+        </div>
+    </div>
+
+    <section class="card">
+        <div class="card-header">
+            <h2>Recent transactions</h2>
+            <a th:href="@{/admin/transactions}">View all</a>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(stats.recentTransactions)}">
+                <td colspan="6" class="empty-cell">No transactions recorded yet.</td>
+            </tr>
+            <tr th:each="t : ${stats.recentTransactions}">
+                <td>
+                    <span class="badge" th:classappend="'badge-' + ${t.transactionType.name().toLowerCase()}">
+                        <span th:text="${t.transactionType.name()}">TYPE</span>
+                    </span>
+                </td>
+                <td th:text="${'$' + #numbers.formatDecimal(t.amount, 1, 2)}">$0.00</td>
+                <td th:text="${t.sourceAccount != null ? t.sourceAccount.accountNumber : '-'}">-</td>
+                <td th:text="${t.destinationAccount != null ? t.destinationAccount.accountNumber : '-'}">-</td>
+                <td th:text="${#temporals.format(t.transactionDate, 'dd MMM yyyy HH:mm')}">date</td>
+                <td th:text="${t.description}">desc</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

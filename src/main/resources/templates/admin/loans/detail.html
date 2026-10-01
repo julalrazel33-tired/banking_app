@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Loans')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('loans', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <a th:href="@{/admin/loans}" class="back-link">&larr; Back to loans</a>
+
+    <h1>Loan <span th:text="'#' + ${loan.id}">#1</span></h1>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <div class="two-col">
+        <section class="card">
+            <h2>Loan details</h2>
+            <table class="info-table">
+                <tr>
+                    <th>Customer</th>
+                    <td>
+                        <a th:href="@{/admin/customers/{id}(id=${loan.customer.id})}"
+                           th:text="${loan.customer.fullName}">Name</a>
+                    </td>
+                </tr>
+                <tr><th>Loan type</th><td th:text="${loan.loanType.name()}">PERSONAL</td></tr>
+                <tr><th>Principal</th><td th:text="${'$' + #numbers.formatDecimal(loan.principalAmount, 1, 2)}">$0.00</td></tr>
+                <tr><th>Interest rate</th><td th:text="${loan.interestRate} + '%'">0%</td></tr>
+                <tr><th>Remaining balance</th><td class="balance"
+                    th:text="${'$' + #numbers.formatDecimal(loan.remainingBalance, 1, 2)}">$0.00</td></tr>
+                <tr>
+                    <th>Status</th>
+                    <td>
+                        <span class="badge"
+                              th:classappend="'badge-' + ${loan.status.name().toLowerCase()}"
+                              th:text="${loan.status.name()}">ACTIVE</span>
+                    </td>
+                </tr>
+                <tr><th>Granted</th><td th:text="${#temporals.format(loan.dateCreated, 'dd MMM yyyy HH:mm')}">date</td></tr>
+                <tr th:if="${loan.datePaidOff != null}">
+                    <th>Paid off</th>
+                    <td th:text="${#temporals.format(loan.datePaidOff, 'dd MMM yyyy HH:mm')}">date</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="card" th:if="${loan.status.name() == 'ACTIVE'}">
+            <h2>Make a payment</h2>
+            <form th:action="@{/admin/loans/{id}/payment(id=${loan.id})}" th:object="${loanPaymentForm}"
+                  method="post" class="form-card">
+                <div class="form-row">
+                    <label for="accountId">Pay from account</label>
+                    <select id="accountId" th:field="*{accountId}">
+                        <option value="">-- select account --</option>
+                        <option th:each="account : ${accounts}" th:value="${account.id}"
+                                th:text="${account.accountNumber + ' - ' + account.accountType.name() + ' ($' + account.balance + ')'}"></option>
+                    </select>
+                    <p class="field-error" th:if="${#fields.hasErrors('accountId')}" th:errors="*{accountId}"></p>
+                </div>
+                <div class="form-row">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" step="0.01" min="0.01" th:field="*{amount}">
+                    <p class="field-error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></p>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn-primary">Pay</button>
+                </div>
+            </form>
+            <p class="hint">The payment is taken from the selected account and reduces the remaining balance.
+                It cannot exceed the remaining balance of the loan.</p>
+        </section>
+
+        <section class="card" th:if="${loan.status.name() == 'PAID'}">
+            <h2>Loan status</h2>
+            <p>This loan has been fully paid off.</p>
+        </section>
+    </div>
+</main>
+</body>
+</html>

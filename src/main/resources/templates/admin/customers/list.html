@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Customers')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('customers', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <div class="card-header page-heading">
+        <h1>Customers</h1>
+        <a th:href="@{/admin/customers/new}" class="btn-primary">Add customer</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <section class="card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Accounts</th>
+                <th>Loans</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(customers)}">
+                <td colspan="7" class="empty-cell">No customers yet.</td>
+            </tr>
+            <tr th:each="customer : ${customers}">
+                <td>
+                    <a th:href="@{/admin/customers/{id}(id=${customer.id})}" th:text="${customer.fullName}">Name</a>
+                </td>
+                <td th:text="${customer.email}">email</td>
+                <td th:text="${customer.phone != null && !customer.phone.isEmpty() ? customer.phone : '-'}">-</td>
+                <td th:text="${customer.accounts.size()}">0</td>
+                <td th:text="${customer.loans.size()}">0</td>
+                <td th:text="${#temporals.format(customer.dateCreated, 'dd MMM yyyy')}">date</td>
+                <td class="actions">
+                    <a th:href="@{/admin/customers/{id}(id=${customer.id})}" class="btn-small">View</a>
+                    <a th:href="@{/admin/customers/{id}/edit(id=${customer.id})}" class="btn-small">Edit</a>
+                    <form th:action="@{/admin/customers/{id}/delete(id=${customer.id})}" method="post"
+                          class="inline"
+                          onsubmit="return confirm('Delete this customer and all related accounts, loans and transactions?');">
+                        <button type="submit" class="btn-small btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

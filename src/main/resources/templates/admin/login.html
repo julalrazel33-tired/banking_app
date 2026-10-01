@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+
+<body class="login-body">
+<div class="login-box">
+    <h1>Banking System</h1>
+    <p class="login-subtitle">Administrator Login</p>
+
+    <div class="alert alert-error" th:if="${loginError}" th:text="${loginError}"></div>
+    <div class="alert alert-success" th:if="${logoutMessage}" th:text="${logoutMessage}"></div>
+
+    <form th:action="@{/admin/login}" method="post">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autofocus autocomplete="username">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password">
+
+        <button type="submit" class="btn-primary btn-block">Sign in</button>
+    </form>
+</div>
+</body>
+</html>

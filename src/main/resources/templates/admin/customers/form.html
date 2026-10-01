@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Customers')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('customers', ${loggedInAdmin})}"></div>
+
+<main class="container narrow">
+    <a th:href="@{/admin/customers}" class="back-link">&larr; Back to customers</a>
+    <h1 th:text="${customerId == null} ? 'New customer' : 'Edit customer'">New customer</h1>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <!-- Create -->
+    <form th:if="${customerId == null}" th:action="@{/admin/customers}" th:object="${customerForm}"
+          method="post" class="card form-card">
+        <div class="form-row">
+            <label for="firstName">First name</label>
+            <input type="text" id="firstName" th:field="*{firstName}">
+            <p class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+        </div>
+        <div class="form-row">
+            <label for="lastName">Last name</label>
+            <input type="text" id="lastName" th:field="*{lastName}">
+            <p class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+        </div>
+        <div class="form-row">
+            <label for="email">Email</label>
+            <input type="email" id="email" th:field="*{email}">
+            <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+        </div>
+        <div class="form-row">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" th:field="*{phone}">
+            <p class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+        </div>
+        <div class="form-row">
+            <label for="address">Address</label>
+            <input type="text" id="address" th:field="*{address}">
+            <p class="field-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></p>
+        </div>
+        <div class="form-row">
+            <button type="submit" class="btn-primary">Create customer</button>
+        </div>
+    </form>
+
+    <!-- Update -->
+    <form th:if="${customerId != null}"
+          th:action="@{/admin/customers/{id}/update(id=${customerId})}" th:object="${customerForm}"
+          method="post" class="card form-card">
+        <div class="form-row">
+            <label for="firstName">First name</label>
+            <input type="text" id="firstName" th:field="*{firstName}">
+            <p class="field-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></p>
+        </div>
+        <div class="form-row">
+            <label for="lastName">Last name</label>
+            <input type="text" id="lastName" th:field="*{lastName}">
+            <p class="field-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></p>
+        </div>
+        <div class="form-row">
+            <label for="email">Email</label>
+            <input type="email" id="email" th:field="*{email}">
+            <p class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+        </div>
+        <div class="form-row">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" th:field="*{phone}">
+            <p class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+        </div>
+        <div class="form-row">
+            <label for="address">Address</label>
+            <input type="text" id="address" th:field="*{address}">
+            <p class="field-error" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></p>
+        </div>
+        <div class="form-row">
+            <button type="submit" class="btn-primary">Save changes</button>
+        </div>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Accounts')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('accounts', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <a th:href="@{/admin/accounts}" class="back-link">&larr; Back to accounts</a>
+
+    <div class="card-header page-heading">
+        <h1>Account <span th:text="${account.accountNumber}">12345</span></h1>
+        <div>
+            <form th:if="${account.status.name() == 'ACTIVE'}"
+                  th:action="@{/admin/accounts/{id}/freeze(id=${account.id})}" method="post" class="inline">
+                <button type="submit" class="btn-small">Freeze</button>
+            </form>
+            <form th:if="${account.status.name() == 'FROZEN'}"
+                  th:action="@{/admin/accounts/{id}/unfreeze(id=${account.id})}" method="post" class="inline">
+                <button type="submit" class="btn-small">Unfreeze</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <section class="card">
+        <table class="info-table">
+            <tr>
+                <th>Owner</th>
+                <td>
+                    <a th:href="@{/admin/customers/{id}(id=${account.customer.id})}"
+                       th:text="${account.customer.fullName}">Name</a>
+                </td>
+            </tr>
+            <tr><th>Account type</th><td th:text="${account.accountType.name()}">CHECKING</td></tr>
+            <tr><th>Balance</th><td class="balance"
+                th:text="${'$' + #numbers.formatDecimal(account.balance, 1, 2)}">$0.00</td></tr>
+            <tr>
+                <th>Status</th>
+                <td>
+                    <span class="badge"
+                          th:classappend="'badge-' + ${account.status.name().toLowerCase()}"
+                          th:text="${account.status.name()}">ACTIVE</span>
+                </td>
+            </tr>
+            <tr><th>Opened</th><td th:text="${#temporals.format(account.dateCreated, 'dd MMM yyyy HH:mm')}">date</td></tr>
+        </table>
+    </section>
+
+    <div class="two-col">
+        <section class="card">
+            <h2>Deposit</h2>
+            <form th:action="@{/admin/accounts/{id}/deposit(id=${account.id})}" method="post" class="form-card">
+                <div class="form-row">
+                    <label for="depositAmount">Amount</label>
+                    <input type="number" id="depositAmount" name="amount" step="0.01" min="0.01" required>
+                </div>
+                <button type="submit" class="btn-primary">Deposit</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Withdraw</h2>
+            <form th:action="@{/admin/accounts/{id}/withdraw(id=${account.id})}" method="post" class="form-card">
+                <div class="form-row">
+                    <label for="withdrawAmount">Amount</label>
+                    <input type="number" id="withdrawAmount" name="amount" step="0.01" min="0.01" required>
+                </div>
+                <button type="submit" class="btn-primary">Withdraw</button>
+            </form>
+        </section>
+    </div>
+
+    <section class="card">
+        <h2>Transaction history</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>Direction</th>
+                <th>Amount</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(transactions)}">
+                <td colspan="8" class="empty-cell">No transactions for this account yet.</td>
+            </tr>
+            <tr th:each="t : ${transactions}">
+                <td>
+                    <span class="badge" th:classappend="'badge-' + ${t.transactionType.name().toLowerCase()}"
+                          th:text="${t.transactionType.name()}">TYPE</span>
+                </td>
+                <td>
+                    <span th:if="${t.destinationAccount != null && t.destinationAccount.id == account.id}" class="direction-in">In</span>
+                    <span th:if="${t.sourceAccount != null && t.sourceAccount.id == account.id}" class="direction-out">Out</span>
+                </td>
+                <td th:text="${'$' + #numbers.formatDecimal(t.amount, 1, 2)}">$0.00</td>
+                <td th:text="${t.sourceAccount != null ? t.sourceAccount.accountNumber : '-'}">-</td>
+                <td th:text="${t.destinationAccount != null ? t.destinationAccount.accountNumber : '-'}">-</td>
+                <td th:text="${#temporals.format(t.transactionDate, 'dd MMM yyyy HH:mm')}">date</td>
+                <td th:text="${t.description}">desc</td>
+                <td>
+                    <span class="badge" th:classappend="'badge-' + ${t.status.name().toLowerCase()}"
+                          th:text="${t.status.name()}">SUCCESS</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

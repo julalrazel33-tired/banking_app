@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Accounts')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('accounts', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <div class="card-header page-heading">
+        <h1>Bank accounts</h1>
+        <a th:href="@{/admin/accounts/new}" class="btn-primary">Open account</a>
+    </div>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <section class="card">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Account no.</th>
+                <th>Type</th>
+                <th>Customer</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(accounts)}">
+                <td colspan="7" class="empty-cell">No accounts yet.</td>
+            </tr>
+            <tr th:each="account : ${accounts}">
+                <td>
+                    <a th:href="@{/admin/accounts/{id}(id=${account.id})}" th:text="${account.accountNumber}">12345</a>
+                </td>
+                <td th:text="${account.accountType.name()}">CHECKING</td>
+                <td>
+                    <a th:href="@{/admin/customers/{id}(id=${account.customer.id})}" th:text="${account.customer.fullName}">Name</a>
+                </td>
+                <td th:text="${'$' + #numbers.formatDecimal(account.balance, 1, 2)}">$0.00</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="'badge-' + ${account.status.name().toLowerCase()}"
+                          th:text="${account.status.name()}">ACTIVE</span>
+                </td>
+                <td th:text="${#temporals.format(account.dateCreated, 'dd MMM yyyy')}">date</td>
+                <td class="actions">
+                    <a th:href="@{/admin/accounts/{id}(id=${account.id})}" class="btn-small">View</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

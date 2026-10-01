@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Customers')}"></head>
+
+<body>
+<div th:replace="~{fragments/layout :: navbar('customers', ${loggedInAdmin})}"></div>
+
+<main class="container">
+    <a th:href="@{/admin/customers}" class="back-link">&larr; Back to customers</a>
+
+    <div class="card-header page-heading">
+        <h1 th:text="${customer.fullName}">Customer</h1>
+        <div>
+            <a th:href="@{/admin/customers/{id}/edit(id=${customer.id})}" class="btn-primary">Edit</a>
+            <a th:href="@{/admin/accounts/new}" class="btn-primary">Open account</a>
+            <a th:href="@{/admin/loans/new}" class="btn-primary">Grant loan</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: flash}"></div>
+
+    <section class="card">
+        <h2>Details</h2>
+        <table class="info-table">
+            <tr><th>Email</th><td th:text="${customer.email}">email</td></tr>
+            <tr><th>Phone</th><td th:text="${customer.phone != null && !customer.phone.isEmpty() ? customer.phone : '-'}">-</td></tr>
+            <tr><th>Address</th><td th:text="${customer.address != null && !customer.address.isEmpty() ? customer.address : '-'}">-</td></tr>
+            <tr><th>Customer since</th><td th:text="${#temporals.format(customer.dateCreated, 'dd MMM yyyy HH:mm')}">date</td></tr>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Accounts (<span th:text="${customer.accounts.size()}">0</span>)</h2>
+        <table class="table">
+            <thead>
+            <tr><th>Account no.</th><th>Type</th><th>Balance</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(customer.accounts)}">
+                <td colspan="5" class="empty-cell">This customer has no accounts yet.</td>
+            </tr>
+            <tr th:each="account : ${customer.accounts}">
+                <td th:text="${account.accountNumber}">12345</td>
+                <td th:text="${account.accountType.name()}">CHECKING</td>
+                <td th:text="${'$' + #numbers.formatDecimal(account.balance, 1, 2)}">$0.00</td>
+                <td><span class="badge"
+                          th:classappend="'badge-' + ${account.status.name().toLowerCase()}"
+                          th:text="${account.status.name()}">ACTIVE</span></td>
+                <td><a th:href="@{/admin/accounts/{id}(id=${account.id})}" class="btn-small">View</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Loans (<span th:text="${customer.loans.size()}">0</span>)</h2>
+        <table class="table">
+            <thead>
+            <tr><th>Loan</th><th>Type</th><th>Principal</th><th>Rate</th><th>Remaining</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(customer.loans)}">
+                <td colspan="7" class="empty-cell">This customer has no loans.</td>
+            </tr>
+            <tr th:each="loan : ${customer.loans}">
+                <td th:text="'#' + ${loan.id}">#1</td>
+                <td th:text="${loan.loanType.name()}">PERSONAL</td>
+                <td th:text="${'$' + #numbers.formatDecimal(loan.principalAmount, 1, 2)}">$0.00</td>
+                <td th:text="${loan.interestRate} + '%'">0%</td>
+                <td th:text="${'$' + #numbers.formatDecimal(loan.remainingBalance, 1, 2)}">$0.00</td>
+                <td><span class="badge"
+                          th:classappend="'badge-' + ${loan.status.name().toLowerCase()}"
+                          th:text="${loan.status.name()}">ACTIVE</span></td>
+                <td><a th:href="@{/admin/loans/{id}(id=${loan.id})}" class="btn-small">View</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>
