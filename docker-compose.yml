@@ -7,7 +7,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "${DB_PORT:-5433}:5432"
+      - "127.0.0.1:${DB_PORT:-5433}:5432"
+    networks:
+      - banking-net
     volumes:
       - db-data:/var/lib/postgresql
     healthcheck:
@@ -17,17 +19,27 @@ services:
       retries: 10
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        APP_PORT: ${APP_PORT:-8083}
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
+      APP_PORT: ${APP_PORT:-8083}
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "8080:8080"
+      - "127.0.0.1:${APP_PORT:-8083}:${APP_PORT:-8083}"
+    networks:
+      - banking-net
 
 volumes:
   db-data:
+
+networks:
+  banking-net:
+    driver: bridge
